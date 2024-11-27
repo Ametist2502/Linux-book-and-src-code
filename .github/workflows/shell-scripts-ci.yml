@@ -1,0 +1,36 @@
+name: Shell Script CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-shell-scripts:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up ShellCheck
+      uses: action-shellcheck@v2
+      with:
+        args: "**/*.sh"  # Lint tất cả các file .sh trong repository
+
+    - name: Ensure no syntax errors
+      run: |
+        # Scan syntax all file .sh
+        find . -name "*.sh" -exec bash -n {} \;
+
+    - name: Run all shell scripts
+      run: |
+        # Find and run file .sh
+        find . -name "*.sh" | while read file; do
+          echo "Running $file"
+          chmod +x "$file"
+          "$file"
+        done
